@@ -30,11 +30,14 @@ function Install-GitDirect {
 
 function Install-NodeDirect {
     Write-Host 'Khong co winget - dang tai Node.js LTS chinh thuc...' -ForegroundColor Cyan
-    $release = Invoke-RestMethod 'https://nodejs.org/dist/index.json' | Where-Object { $_.lts } | Select-Object -First 1
+    $allReleases = Invoke-RestMethod 'https://nodejs.org/dist/index.json'
+    $release = $allReleases | Where-Object { $_.lts } | Select-Object -First 1
     if (-not $release) { throw 'Khong tim thay phien ban Node.js LTS.' }
     $version = $release.version
     $installer = Join-Path $downloadDir 'node-lts-x64.msi'
-    Invoke-WebRequest -UseBasicParsing "https://nodejs.org/dist/$version/node-$version-x64.msi" -OutFile $installer
+    $nodeUrl = "https://nodejs.org/dist/$version/node-$version-x64.msi"
+    Write-Host "Node.js: $nodeUrl" -ForegroundColor DarkGray
+    Invoke-WebRequest -UseBasicParsing $nodeUrl -OutFile $installer
     $process = Start-Process 'msiexec.exe' -ArgumentList '/i',"`"$installer`"",'/qn','/norestart' -Wait -PassThru
     if ($process.ExitCode -ne 0) { throw "Cai Node.js that bai (ma $($process.ExitCode))." }
 }
