@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "mods": [
+    {
+      "id": "example-combat-log",
+      "module": "/mods/example-combat-log.js",
+      "enabled": false
+    }
+  ]
+}

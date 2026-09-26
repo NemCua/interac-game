@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>TikTok LIVE API Test</title>
+  <style>
+    :root{color-scheme:dark;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}*{box-sizing:border-box}body{margin:0;background:#070b13;color:#dbe8ff}.wrap{width:min(1100px,94vw);margin:24px auto}.panel{padding:18px;border:1px solid #26334a;border-radius:14px;background:#0d1421;box-shadow:0 16px 55px #0008}h1{margin:0 0 6px;font:800 25px system-ui}.hint{margin:0 0 16px;color:#8392aa;font:14px system-ui}.controls{display:flex;gap:8px;flex-wrap:wrap}input,button{border:1px solid #34445e;border-radius:9px;padding:11px 14px;background:#111b2b;color:#fff;font:700 14px system-ui}input{flex:1;min-width:230px}button{cursor:pointer;background:#2867df}button.disconnect{background:#582334}button:disabled{opacity:.5}.status{display:flex;gap:12px;flex-wrap:wrap;margin:15px 0}.chip{padding:7px 10px;border:1px solid #29364b;border-radius:20px;color:#a9b8ce;font:700 12px system-ui}.chip.online{border-color:#197a55;color:#56e4a8}.chip.error{border-color:#84364b;color:#ff7892}.logs{margin-top:14px;height:68vh;overflow:auto;border:1px solid #202c40;border-radius:12px;background:#050911}.entry{display:grid;grid-template-columns:110px 105px 1fr;gap:10px;padding:9px 12px;border-bottom:1px solid #162033;font-size:12px}.entry .time{color:#65748d}.entry .type{color:#61e4ff;font-weight:900}.entry.gift .type{color:#ffd05b}.entry.chat .type{color:#78efa9}.entry.error .type{color:#ff647c}.entry pre{margin:0;white-space:pre-wrap;word-break:break-word;color:#c9d4e7}.empty{padding:30px;color:#64738c;text-align:center}code{color:#70dcff}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="panel">
+      <h1>TikTok LIVE — Event Monitor</h1>
+      <p class="hint">Nhập username đang LIVE, không cần ký tự @. Backend đang dùng Python TikTokLive bridge, không cần TikTool API key.</p>
+      <div class="controls"><input id="username" placeholder="Ví dụ: tv_asahi_news" autocomplete="off"><button id="connect">KẾT NỐI</button><button id="disconnect" class="disconnect">NGẮT</button><button id="clear">XÓA LOG</button></div>
+      <div class="status"><span id="connection" class="chip">CHƯA KẾT NỐI</span><span id="account" class="chip">@—</span><span id="count" class="chip">0 EVENTS</span><span id="bridge" class="chip">PYTHON BRIDGE</span></div>
+      <div id="logs" class="logs"><div class="empty">Đang chờ sự kiện…</div></div>
+    </section>
+  </main>
+  <script>
+    const $=id=>document.getElementById(id),logs=$('logs');let entries=[];
+    function updateStatus(status={}){$('connection').textContent=status.connecting?'ĐANG KẾT NỐI':status.connected?'ĐÃ KẾT NỐI':'ĐÃ NGẮT';$('connection').className=`chip ${status.connected?'online':status.lastError?'error':''}`;$('account').textContent=status.username?`@${status.username}`:'@—';$('count').textContent=`${status.eventCount||0} EVENTS`;$('bridge').textContent=(status.bridge||'python').toUpperCase()+' BRIDGE';$('bridge').className='chip online'}
+    function render(){logs.innerHTML='';if(!entries.length){logs.innerHTML='<div class="empty">Đang chờ sự kiện…</div>';return}for(const entry of [...entries].reverse()){const row=document.createElement('div');row.className=`entry ${entry.type}`;const time=document.createElement('span');time.className='time';time.textContent=new Date(entry.time).toLocaleTimeString('vi-VN');const type=document.createElement('span');type.className='type';type.textContent=entry.type.toUpperCase();const pre=document.createElement('pre');pre.textContent=JSON.stringify(entry.data,null,2);row.append(time,type,pre);logs.append(row)}}
+    const source=new EventSource('/api/tiktok/stream');source.onmessage=event=>{const msg=JSON.parse(event.data);if(msg.kind==='snapshot'){entries=msg.logs||[];updateStatus(msg.status)}else if(msg.kind==='log'){entries.push(msg.entry);entries=entries.slice(-150);updateStatus(msg.status)}else updateStatus(msg.status);render()};source.onerror=()=>{$('connection').textContent='MẤT KẾT NỐI SERVER';$('connection').className='chip error'};
+    async function post(path,data){const response=await fetch(path,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(data||{})});const result=await response.json();if(!response.ok)throw new Error(result.error||'Request failed');return result}
+    $('connect').onclick=async()=>{const button=$('connect');button.disabled=true;try{updateStatus({username:$('username').value,connecting:true,bridge:'python'});await post('/api/tiktok/connect',{username:$('username').value})}catch(error){entries.push({time:new Date().toISOString(),type:'error',data:{message:error.message}});render()}finally{button.disabled=false}};
+    $('disconnect').onclick=()=>post('/api/tiktok/disconnect').catch(error=>alert(error.message));$('clear').onclick=()=>{entries=[];render()};
+  </script>
+</body>
+</html>

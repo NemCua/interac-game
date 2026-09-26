@@ -1,0 +1,118 @@
+{
+  "updatedAt": "2026-09-24",
+  "source": "TikTokLive gift logs copied during manual testing",
+  "gifts": [
+    {
+      "giftName": "Rose",
+      "giftId": 5655,
+      "diamondCount": 1,
+      "defaultTeam": "VIETNAM",
+      "defaultAction": "rain",
+      "notes": "Mưa đạn"
+    },
+    {
+      "giftName": "SEA Shell red",
+      "giftId": 1347195,
+      "diamondCount": 1,
+      "defaultTeam": "JAPAN",
+      "defaultAction": "rain",
+      "notes": "Mưa đạn"
+    },
+    {
+      "giftName": "Mate Melody",
+      "giftId": 1167769,
+      "diamondCount": 1,
+      "defaultTeam": "CHINA",
+      "defaultAction": "rain",
+      "notes": "Mưa đạn"
+    },
+    {
+      "giftName": "Welcome Dallah",
+      "giftId": 919346,
+      "diamondCount": 1,
+      "defaultTeam": "CHINA",
+      "defaultAction": "plane",
+      "notes": "Không kích"
+    },
+    {
+      "giftName": "TikTok",
+      "giftId": 5269,
+      "diamondCount": 1,
+      "defaultTeam": "VIETNAM",
+      "defaultAction": "plane",
+      "notes": "Không kích"
+    },
+    {
+      "giftName": "Mooncake",
+      "giftId": 17021,
+      "diamondCount": 1,
+      "defaultTeam": null,
+      "defaultAction": null,
+      "notes": "Tạm bỏ khỏi Thailand"
+    },
+    {
+      "giftName": "Ice Cream Cone",
+      "giftId": 5827,
+      "diamondCount": 1,
+      "defaultTeam": "JAPAN",
+      "defaultAction": "plane",
+      "notes": "Không kích"
+    },
+    {
+      "giftName": "GG",
+      "giftId": 6064,
+      "diamondCount": 1,
+      "defaultTeam": "THAILAND",
+      "defaultAction": "plane",
+      "notes": "Không kích"
+    },
+    {
+      "giftName": "You're awesome",
+      "giftId": 15232,
+      "diamondCount": 1,
+      "defaultTeam": "JAPAN",
+      "defaultAction": null,
+      "notes": "Tạm tắt, chưa gán skill"
+    },
+    {
+      "giftName": "Okay",
+      "giftId": 8635,
+      "diamondCount": 5,
+      "defaultTeam": "VIETNAM",
+      "defaultAction": "mortar",
+      "notes": "Siêu pháo cối"
+    },
+    {
+      "giftName": "Peach",
+      "giftId": 10961,
+      "diamondCount": 5,
+      "defaultTeam": "THAILAND",
+      "defaultAction": "mortar",
+      "notes": "Siêu pháo cối"
+    },
+    {
+      "giftName": "Bing Chiling",
+      "giftId": 7412,
+      "diamondCount": 5,
+      "defaultTeam": "CHINA",
+      "defaultAction": "mortar",
+      "notes": "Siêu pháo cối"
+    },
+    {
+      "giftName": "Finger Heart",
+      "giftId": 5487,
+      "diamondCount": 5,
+      "defaultTeam": "JAPAN",
+      "defaultAction": "mortar",
+      "notes": "Siêu pháo cối"
+    },
+    {
+      "giftName": "Love you so much",
+      "giftId": 15231,
+      "diamondCount": 1,
+      "defaultTeam": "THAILAND",
+      "defaultAction": "rain",
+      "notes": "Thay Mooncake: Mưa đạn"
+    }
+  ]
+}

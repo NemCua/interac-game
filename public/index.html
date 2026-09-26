@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Pháo Đài Sắc Màu</title>
+  <script>
+    (()=>{const rotate=new URLSearchParams(location.search).get('rotate');if(rotate==='left'||rotate==='right')document.documentElement.classList.add('capture-rotate',`rotate-${rotate}`)})();
+  </script>
+  <script type="importmap">{"imports":{"three":"/vendor/three.module.js"}}</script>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="layout-fix.css?v=12">
+</head>
+<body>
+  <main class="game-shell">
+    <section class="scoreboard" id="scoreboard"></section>
+    <section class="arena-wrap">
+      <canvas id="game" aria-label="Bản đồ bốn khẩu pháo"></canvas>
+      <div class="flash" id="flash"></div>
+    </section>
+    <div class="elimination-banner" id="eliminationBanner"><div class="elim-line"></div><h2 id="eliminationTitle">BLUE ELIMINATED</h2><div class="elim-sub"><i></i><span id="eliminationSub">PHÁO ĐÀI ĐÃ BỊ TIÊU DIỆT</span><i></i></div></div>
+    <div class="winner-banner" id="winnerBanner"><small>LAST CANNON STANDING</small><h2>🏆 WINNER 🏆</h2><b id="winnerName">LAM NGỌC</b><span>PHÁO ĐÀI CUỐI CÙNG</span></div>
+    <div class="gift-corners" id="giftCorners" aria-hidden="true"></div>
+    <div class="gift-popup" id="giftPopup" aria-hidden="true"></div>
+    <div class="latest-gifter" id="latestGifter" aria-hidden="true"></div>
+    <div class="comment-feed" id="commentFeed" aria-hidden="true"></div>
+    <footer>
+      <div class="win-rank" id="winRank" aria-label="Bảng xếp hạng số trận thắng"></div>
+    </footer>
+    <section class="skill-controls" aria-label="Kỹ năng pháo">
+      <button class="skill-button skill-red" data-team="0" data-skill="storm"><small>PHÁO 1</small><b>☄ BÃO ĐẠN</b></button>
+      <button class="skill-button skill-red rain" data-team="0" data-skill="rain"><small>PHÁO 1</small><b>☂ MƯA ĐẠN</b></button>
+      <button class="skill-button skill-red plane" data-team="0" data-skill="plane"><small>THAILAND</small><b>✈ KHÔNG KÍCH</b></button>
+      <button class="skill-button skill-red focus" data-team="0" data-skill="focus"><small>THAILAND</small><b>⌖ KHÓA MỤC TIÊU</b></button>
+      <button class="skill-button skill-red mortar" data-team="0" data-skill="mortar"><small>THAILAND</small><b>◉ SIÊU PHÁO CỐI</b></button>
+      <button class="skill-button skill-yellow" data-team="1" data-skill="storm"><small>PHÁO 2</small><b>☄ BÃO ĐẠN</b></button>
+      <button class="skill-button skill-yellow rain" data-team="1" data-skill="rain"><small>PHÁO 2</small><b>☂ MƯA ĐẠN</b></button>
+      <button class="skill-button skill-yellow plane" data-team="1" data-skill="plane"><small>VIETNAM</small><b>✈ KHÔNG KÍCH</b></button>
+      <button class="skill-button skill-yellow focus" data-team="1" data-skill="focus"><small>VIETNAM</small><b>⌖ KHÓA MỤC TIÊU</b></button>
+      <button class="skill-button skill-yellow mortar" data-team="1" data-skill="mortar"><small>VIETNAM</small><b>◉ SIÊU PHÁO CỐI</b></button>
+      <button class="skill-button skill-green" data-team="2" data-skill="storm"><small>PHÁO 3</small><b>☄ BÃO ĐẠN</b></button>
+      <button class="skill-button skill-green rain" data-team="2" data-skill="rain"><small>PHÁO 3</small><b>☂ MƯA ĐẠN</b></button>
+      <button class="skill-button skill-green plane" data-team="2" data-skill="plane"><small>JAPAN</small><b>✈ KHÔNG KÍCH</b></button>
+      <button class="skill-button skill-green focus" data-team="2" data-skill="focus"><small>JAPAN</small><b>⌖ KHÓA MỤC TIÊU</b></button>
+      <button class="skill-button skill-green mortar" data-team="2" data-skill="mortar"><small>JAPAN</small><b>◉ SIÊU PHÁO CỐI</b></button>
+      <button class="skill-button skill-blue" data-team="3" data-skill="storm"><small>PHÁO 4</small><b>☄ BÃO ĐẠN</b></button>
+      <button class="skill-button skill-blue rain" data-team="3" data-skill="rain"><small>PHÁO 4</small><b>☂ MƯA ĐẠN</b></button>
+      <button class="skill-button skill-blue plane" data-team="3" data-skill="plane"><small>CHINA</small><b>✈ KHÔNG KÍCH</b></button>
+      <button class="skill-button skill-blue focus" data-team="3" data-skill="focus"><small>CHINA</small><b>⌖ KHÓA MỤC TIÊU</b></button>
+      <button class="skill-button skill-blue mortar" data-team="3" data-skill="mortar"><small>CHINA</small><b>◉ SIÊU PHÁO CỐI</b></button>
+    </section>
+    <aside class="tiktok-panel" aria-label="TikTok LIVE API">
+      <div class="tiktok-title"><div><small>LIVE API</small><b>📡 TIKTOK CONNECT</b></div><span id="tikTokStatusChip">OFFLINE</span></div>
+      <div class="tiktok-connect">
+        <input id="tikTokUsername" placeholder="username đang LIVE">
+        <button id="tikTokConnect" type="button">CONNECT</button>
+        <button id="tikTokDisconnect" type="button">DISCONNECT</button>
+        <button id="tikTokClear" type="button">CLEAR</button>
+      </div>
+      <div class="tiktok-meta">
+        <span id="tikTokAccount">@—</span>
+        <span id="tikTokCount">0 EVENTS</span>
+        <span>PYTHON</span>
+      </div>
+      <div class="tiktok-help">Comment: thailand / vietnam / japan / china</div>
+      <div class="tiktok-logs" id="tikTokLogs"><div class="tiktok-empty">Đang chờ API event…</div></div>
+    </aside>
+    <aside class="settings-panel">
+      <div class="settings-title"><div><small>GAME CONTROL</small><b>⚙ SETTINGS</b></div><span>LƯU CỤC BỘ</span></div>
+      <section class="kill-test"><h3>TEST TIÊU DIỆT</h3><div><button data-kill="0">☠ PHÁO 1</button><button data-kill="1">☠ PHÁO 2</button><button data-kill="3">☠ PHÁO 4</button><button data-kill="2">☠ PHÁO 3</button></div></section>
+      <section class="comment-test"><h3>TEST BÌNH LUẬN</h3><div><button data-comment-test="0">💬 THAILAND</button><button data-comment-test="1">💬 VIETNAM</button><button data-comment-test="2">💬 JAPAN</button><button data-comment-test="3">💬 CHINA</button></div></section>
+      <section class="gift-test"><h3>TEST TẶNG QUÀ</h3><div><button data-gift-test="0">🎁 THAILAND</button><button data-gift-test="1">🎁 VIETNAM</button><button data-gift-test="2">🎁 JAPAN</button><button data-gift-test="3">🎁 CHINA</button></div></section>
+      <section class="position-test"><h3>CHỈNH AVATAR</h3><div><button id="toggleAvatarEdit" type="button">↕ KÉO THẢ</button><button id="toggleGifterMock" type="button">✦ BẬT MOCK &gt;5 XU</button><button id="exportAvatarPositions" type="button">⧉ XUẤT VỊ TRÍ</button><button id="resetAvatarPositions" type="button">↺ RESET VỊ TRÍ</button></div></section>
+      <div id="settingsFields"></div>
+      <div class="settings-actions"><button id="saveSettings" type="button">LƯU & ÁP DỤNG</button><button id="resetSettings" type="button">MẶC ĐỊNH</button></div>
+    </aside>
+  </main>
+<script type="module" src="app.js?v=137"></script>
+</body>
+</html>

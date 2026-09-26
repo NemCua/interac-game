@@ -1,0 +1,1 @@
+export const monsterForest={id:'monster-forest',name:'Monster Forest Arena',schemaVersion:1,grid:{minCols:8,minRows:12},spawnLayout:'raid-lanes',territoryLayout:'neutral',supports:['pve','waves','bosses'],presentation:'arena-only'};

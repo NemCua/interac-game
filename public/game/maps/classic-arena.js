@@ -1,0 +1,1 @@
+export const classicArena={id:'classic-arena',name:'Classic Four-corner Arena',schemaVersion:1,grid:{minCols:8,minRows:12},spawnLayout:'four-corners',territoryLayout:'quadrants',supports:['pvp','territory','projectiles']};

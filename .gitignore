@@ -1,0 +1,12 @@
+node_modules/
+__pycache__/
+*.py[cod]
+.DS_Store
+.env
+.env.*
+!.env.example
+npm-debug.log*
+
+# Raw source exports; optimized runtime models are kept in assets/models.
+cannon+3d+model.glb
+cannon+3d+model_tach.glb

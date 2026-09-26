@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Color Cannons Control</title>
+  <style>
+    :root{--bg:#060a12;--panel:#0b1220;--line:#28364f;--text:#f4f7ff;--muted:#91a0bb;--blue:#2d58ff;--red:#ff1744;--white:#f6f8ff;--gold:#ffb400}
+    *{box-sizing:border-box}
+    body{margin:0;background:radial-gradient(circle at 50% -20%,#172038 0,#060a12 45%,#02050a 100%);color:var(--text);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-weight:800;letter-spacing:.03em}
+    .shell{min-height:100vh;padding:22px;display:grid;grid-template-columns:1.05fr 1.25fr 1.05fr;gap:18px}
+    .panel{background:rgba(9,15,27,.94);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 20px 70px #0009;min-height:0}
+    h1,h2,h3{margin:0;text-transform:uppercase}h1{font-size:24px;line-height:1.05}h3{font-size:13px;margin:16px 0 9px;color:#85a8ff}
+    .muted{color:var(--muted);font-size:12px;line-height:1.45;font-weight:700}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+    .chip{border:1px solid #345071;background:#10192b;border-radius:999px;padding:7px 10px;font-size:11px;color:#aebddb}
+    button,input,select{font:inherit}button{border:1px solid #405477;background:#15223a;color:#fff;border-radius:10px;padding:10px 12px;cursor:pointer;text-transform:uppercase;font-size:12px;box-shadow:0 0 0 transparent;transition:.12s transform,.12s filter,.12s background}
+    button:hover{transform:translateY(-1px);filter:brightness(1.12)}button:active{transform:translateY(1px)}input,select{width:100%;border:1px solid #34435d;background:#10192b;color:#eef4ff;border-radius:10px;padding:10px 12px;font-size:13px}
+    .btn-blue{border-color:#4168ff;background:#14265f}.btn-red{border-color:#ff3b64;background:#4b1021}.btn-gold{border-color:#ffbe24;background:#49360b}.btn-white{border-color:#e9efff;background:#383d49}.btn-main{background:#2f83ff;border-color:#4f9aff}.btn-danger{background:#522033;border-color:#ff587c}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:9px}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+    .team-card{border:1px solid var(--line);border-radius:16px;padding:13px;background:#101827}.team-card b{display:block;font-size:18px;margin-bottom:8px}.team-card small{color:#aab4c9;font-size:11px}.team-card.team-0{background:#101a43;border-color:#294bba}.team-card.team-1{background:#401121;border-color:#9d2748}.team-card.team-2{background:#303540;border-color:#7c8491}.team-card.team-3{background:#3b2d12;border-color:#9f7820}
+    .skill-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.skill-grid button{min-height:54px}.skill-grid small{display:block;color:#b9c3d7;font-size:10px}.skill-grid b{font-size:14px}
+    .settings-scroll{max-height:calc(100vh - 175px);overflow:auto;padding-right:4px}.log-box{height:calc(100vh - 220px);overflow:auto;border:1px solid #22304a;background:#050913;border-radius:12px;padding:10px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:600;letter-spacing:0;font-size:12px}
+    .setting-row{display:grid;grid-template-columns:1.1fr .9fr;gap:9px;align-items:center;margin-bottom:8px}.setting-row label{font-size:12px;color:#c5cee2;text-transform:none;letter-spacing:0}.setting-row input[type=checkbox]{width:22px;height:22px;justify-self:end}
+    .connect-row{display:grid;grid-template-columns:1fr auto auto;gap:8px;margin:10px 0}.api-status{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.api-status span{border:1px solid #31435f;background:#10192b;border-radius:999px;padding:6px 9px;font-size:11px;color:#b8c7e2}
+    .entry{border-bottom:1px solid #1b263b;padding:8px 2px}.entry:last-child{border-bottom:0}.entry .meta{display:flex;gap:8px;color:#8da2c7;font-size:11px}.entry .type{color:#fff}.entry.chat .type{color:#63d98e}.entry.gift .type{color:#ffc746}.entry.error .type{color:#ff607f}pre{white-space:pre-wrap;word-break:break-word;margin:6px 0 0;color:#d9e4ff;font:inherit}
+    .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+    @media(max-width:1200px){.shell{grid-template-columns:1fr}.settings-scroll,.log-box{max-height:none;height:420px}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="panel">
+      <div class="top">
+        <div><h1>📡 TikTok LIVE API</h1><div class="muted">Kết nối livestream thật và xem log JSON tại đây.</div></div>
+        <span class="chip" id="statusChip">OFFLINE</span>
+      </div>
+      <div class="connect-row">
+        <input id="username" placeholder="username đang LIVE, ví dụ @abc">
+        <button class="btn-main" id="connectBtn">Connect</button>
+        <button id="disconnectBtn">Disconnect</button>
+      </div>
+      <div class="api-status">
+        <span id="account">@—</span><span id="eventCount">0 EVENTS</span><span>GAME: /</span>
+      </div>
+      <div class="actions">
+        <button id="clearLogs">Clear log</button>
+        <button id="openGame">Mở game</button>
+        <button id="openMonster">Mode quái vật</button>
+        <button id="openRotateLeft">Xoay trái</button>
+        <button id="openRotateRight">Xoay phải</button>
+        <button class="btn-main" data-send='{"type":"reset"}'>Chơi lại</button>
+      </div>
+      <h3>API LOG</h3>
+      <div class="log-box" id="logs"><div class="muted">Đang chờ event…</div></div>
+    </section>
+
+    <section class="panel">
+      <div class="top">
+        <div><h1>🎮 Skill Control</h1><div class="muted">Các nút ở đây điều khiển trực tiếp tab game đang mở cùng port.</div></div>
+        <span class="chip">BroadcastChannel</span>
+      </div>
+      <div class="grid2" id="teams"></div>
+      <h3>Test nhanh</h3>
+      <div class="grid2"><button class="btn-main" data-send='{"type":"skill","team":0,"skill":"storm"}'>☄ Bão đạn · Monster Raid</button></div>
+      <div class="grid4">
+        <button class="btn-blue" data-send='{"type":"commentTest","team":0}'>💬 Thailand</button>
+        <button class="btn-red" data-send='{"type":"commentTest","team":1}'>💬 Vietnam</button>
+        <button class="btn-white" data-send='{"type":"commentTest","team":2}'>💬 Japan</button>
+        <button class="btn-gold" data-send='{"type":"commentTest","team":3}'>💬 China</button>
+        <button class="btn-blue" data-send='{"type":"giftTest","team":0}'>🎁 Thailand</button>
+        <button class="btn-red" data-send='{"type":"giftTest","team":1}'>🎁 Vietnam</button>
+        <button class="btn-white" data-send='{"type":"giftTest","team":2}'>🎁 Japan</button>
+        <button class="btn-gold" data-send='{"type":"giftTest","team":3}'>🎁 China</button>
+      </div>
+      <h3>Test tiêu diệt</h3>
+      <div class="grid4">
+        <button class="btn-danger" data-send='{"type":"kill","team":0}'>☠ Thailand</button>
+        <button class="btn-danger" data-send='{"type":"kill","team":1}'>☠ Vietnam</button>
+        <button class="btn-danger" data-send='{"type":"kill","team":2}'>☠ Japan</button>
+        <button class="btn-danger" data-send='{"type":"kill","team":3}'>☠ China</button>
+      </div>
+      <h3>Chỉnh avatar gift</h3>
+      <div class="grid2">
+        <button data-send='{"type":"avatarEdit","enabled":true}'>Bật kéo thả</button>
+        <button data-send='{"type":"avatarEdit","enabled":false}'>Tắt kéo thả</button>
+        <button data-send='{"type":"gifterMock","enabled":true}'>Bật mock &gt;5 xu</button>
+        <button data-send='{"type":"gifterMock","enabled":false}'>Tắt mock &gt;5 xu</button>
+        <button data-send='{"type":"exportAvatarPositions"}'>Xuất vị trí</button>
+        <button data-send='{"type":"resetAvatarPositions"}'>Reset vị trí</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="top">
+        <div><h1>⚙ Settings</h1><div class="muted">Chỉnh là áp dụng ngay vào game đang chạy.</div></div>
+        <button class="btn-main" data-send='{"type":"reset"}'>Reset bản đồ</button>
+      </div>
+      <div class="actions">
+        <button class="btn-main" id="saveSettings">Lưu & áp dụng</button>
+        <button id="defaultSettings">Mặc định</button>
+        <button data-send='{"type":"reset"}'>Reset bản đồ</button>
+        <button class="btn-danger" data-send='{"type":"resetAll"}'>Reset cả game + số thắng</button>
+      </div>
+      <div class="settings-scroll" id="settingsFields"></div>
+    </section>
+  </main>
+
+  <script>
+    const channel='BroadcastChannel'in window?new BroadcastChannel('color-cannons-control'):null;
+    const teams=[{name:'THAILAND',cls:'btn-blue',card:'team-0'},{name:'VIETNAM',cls:'btn-red',card:'team-1'},{name:'JAPAN',cls:'btn-white',card:'team-2'},{name:'CHINA',cls:'btn-gold',card:'team-3'}];
+    const skills=[['storm','☄ Bullet Storm'],['rain','☂ Bullet Rain'],['plane','✈ Airstrike'],['mortar','◉ Super Mortar'],['lightning','ϟ Thunder Strike']];
+    const DEFAULTS={cols:38,rows:64,boardWidth:11.1,tileGap:.84,tileHeight:.18,tileColumnScale:1.35,tileRipplePower:1.65,backgroundTheme:0,airdropInterval:18,airdropStartHeight:7.5,airdropFallDuration:2.2,airdropMaxAlive:3,maxHp:100,bulletDamage:1,cameraFov:48,cameraY:27,cameraZ:17,sweepDuration:5,sweepArcDegrees:120,autoDelayMin:800,autoDelayMax:3500,quickChance:.16,quickDelayMin:260,quickDelayMax:680,bulletSpeedMin:3.55,bulletSpeedMax:4.45,bulletLife:7.5,bulletSize:.205,bulletHeight:.52,trailSize:.145,trailLength:24,autoStorm:0,autoStormMin:12,autoStormMax:24,stormMin:63,stormMax:88,stormIntervalMin:42,stormIntervalMax:60,stormCooldown:11000,rainMin:72,rainMax:104,rainIntervalMin:85,rainIntervalMax:140,rainCooldown:18000,rainFlightMin:1.05,rainFlightMax:1.7,rainHeightMin:5.5,rainHeightMax:8.5,planeDuration:7,planeDropInterval:.75,planeBombsPerDrop:4,planeBlastCols:3,planeBlastRows:3,planeCooldown:16000,planeHeight:4.8,focusShots:40,focusInterval:75,focusCooldown:9000,mortarShells:5,mortarSequential:1,mortarSequentialInterval:120,mortarWaves:3,mortarBulletsPerWave:18,mortarWaveInterval:280,mortarCooldown:0,lightningStrikeCount:4,lightningBlastRadius:2,lightningRainBullets:3,lightningRainRadius:7,lightningRecursionDepth:3,lightningMaxNodes:260,popVelocity:2.6,popGravity:15,popBounce:.18,particleCount:14,autoRestartAfterWin:1,autoRestartDelay:10,commentMaxLines:6,avatar0X:19.7,avatar0Y:32.3,avatar1X:80.7,avatar1Y:32.3,avatar2X:91.2,avatar2Y:83.6,avatar3X:8,avatar3Y:83.8};
+    DEFAULTS.lightningDamage=1;
+    DEFAULTS.rainBulletSize=.19;DEFAULTS.rainTrailSize=.145;DEFAULTS.rainTrailLength=18;
+    DEFAULTS.planeBombDamage=1;DEFAULTS.mortarImpactDamage=1;
+    DEFAULTS.lightningChildDamage=1;
+    DEFAULTS.monsterCannonSweepDegrees=120;DEFAULTS.monsterCannonBottomOffset=2.2;DEFAULTS.monsterRobotTopOffset=1.7;DEFAULTS.monsterRobotScale=2.75;DEFAULTS.monsterCannonFireMin=800;DEFAULTS.monsterCannonFireMax=2200;
+    DEFAULTS.weatherRain=1;DEFAULTS.weatherRainDensity=360;DEFAULTS.weatherRainSpeed=10;DEFAULTS.weatherRainOpacity=.38;DEFAULTS.weatherCloudOpacity=.32;
+    DEFAULTS.weatherRainWaitMin=18;DEFAULTS.weatherRainWaitMax=40;DEFAULTS.weatherRainDurationMin=24;DEFAULTS.weatherRainDurationMax=48;DEFAULTS.weatherThunderChance=.55;DEFAULTS.weatherThunderMin=6;DEFAULTS.weatherThunderMax=14;
+    const SETTINGS_GROUPS={
+      'Tự động':[['autoRestartAfterWin','Tự chơi lại sau thắng','toggle'],['autoRestartDelay','Chờ sau thắng (giây)',1]],
+  'Giao diện live':[['backgroundTheme','Chọn background','select'],['commentMaxLines','Số dòng bình luận',1]],
+      'Vị trí avatar gift':[['avatar0X','Thailand X (%)',1],['avatar0Y','Thailand Y (%)',1],['avatar1X','Vietnam X (%)',1],['avatar1Y','Vietnam Y (%)',1],['avatar3X','China X (%)',1],['avatar3Y','China Y (%)',1],['avatar2X','Japan X (%)',1],['avatar2Y','Japan Y (%)',1]],
+      'Bản đồ':[['cols','Số cột',1],['rows','Số hàng',1],['boardWidth','Độ rộng sân',.1],['tileGap','Tỷ lệ mặt ô',.01],['tileHeight','Chiều cao ô',.01],['tileColumnScale','Độ dày cột ô',.05],['tileRipplePower','Độ cao bật ô',.05]],
+      'Mode quái vật':[['monsterCannonSweepDegrees','Góc quét cannon người (độ)',1],['monsterCannonBottomOffset','Cannon cách mép dưới',.1],['monsterCannonFireMin','Bắn min (ms)',50],['monsterCannonFireMax','Bắn max (ms)',50],['monsterRobotTopOffset','Robot cách mép trên',.1],['monsterRobotScale','Chiều cao robot',.1]],
+      'Thời tiết · 4 nước':[['weatherRain','Bật thời tiết mưa ngẫu nhiên','toggle'],['weatherRainWaitMin','Chờ mưa min (giây)',1],['weatherRainWaitMax','Chờ mưa max (giây)',1],['weatherRainDurationMin','Mưa kéo dài min (giây)',1],['weatherRainDurationMax','Mưa kéo dài max (giây)',1],['weatherThunderChance','Tỷ lệ xuất hiện sấm',.05],['weatherThunderMin','Khoảng sấm min (giây)',1],['weatherThunderMax','Khoảng sấm max (giây)',1],['weatherRainDensity','Số hạt mưa',10],['weatherRainSpeed','Tốc độ mưa',.5],['weatherRainOpacity','Độ rõ hạt mưa',.01],['weatherCloudOpacity','Độ rõ mây',.01]],
+  'Hòm thính':[['airdropInterval','Mỗi bao nhiêu giây rơi 1 hòm',1],['airdropStartHeight','Độ cao bắt đầu',.5],['airdropFallDuration','Thời gian hòm rơi (giây)',.1],['airdropMaxAlive','Số hòm tối đa trên sân',1]],
+      'Sinh tồn':[['maxHp','Máu mỗi pháo',1],['bulletDamage','Sát thương mỗi đạn',1]],
+      'Camera':[['cameraFov','Góc nhìn FOV',1],['cameraY','Độ cao camera',.5],['cameraZ','Độ nghiêng camera',.5]],
+      'Chuyển động pháo':[['sweepDuration','Giây mỗi lượt quét',.1],['sweepArcDegrees','Góc quét (độ)',1]],
+      'Bắn tự động':[['autoDelayMin','Chờ tối thiểu (ms)',50],['autoDelayMax','Chờ tối đa (ms)',50],['quickChance','Tỷ lệ bắn nhanh',.01],['quickDelayMin','Bắn nhanh min (ms)',10],['quickDelayMax','Bắn nhanh max (ms)',10]],
+      'Đạn thường':[['bulletSpeedMin','Tốc độ thấp',.05],['bulletSpeedMax','Tốc độ cao',.05],['bulletLife','Thời gian tồn tại',.1],['bulletSize','Kích thước đạn',.01],['bulletHeight','Độ cao đạn',.05],['trailSize','Độ dày vệt',.01],['trailLength','Độ dài vệt',1]],
+      'Bão đạn':[['autoStorm','Tự động dùng Bão Đạn','toggle'],['autoStormMin','Tự động sau min (giây)',1],['autoStormMax','Tự động sau max (giây)',1],['stormMin','Số đạn min',1],['stormMax','Số đạn max',1],['stormIntervalMin','Nhịp min (ms)',1],['stormIntervalMax','Nhịp max (ms)',1],['stormCooldown','Hồi chiêu (ms)',100]],
+      'Mưa đạn':[['rainMin','Số đạn min',1],['rainMax','Số đạn max',1],['rainIntervalMin','Nhịp min (ms)',1],['rainIntervalMax','Nhịp max (ms)',1],['rainCooldown','Hồi chiêu (ms)',100],['rainFlightMin','Bay min (giây)',.05],['rainFlightMax','Bay max (giây)',.05],['rainHeightMin','Độ cao min',.1],['rainHeightMax','Độ cao max',.1],['rainBulletSize','Kích thước đạn rơi',.01],['rainTrailSize','Độ dày vệt đạn rơi',.01],['rainTrailLength','Độ dài vệt đạn rơi',1]],
+      'Không kích':[['planeDuration','Thời gian bay (giây)',.1],['planeDropInterval','X · Chu kỳ thả (giây)',.05],['planeBombsPerDrop','Y · Bom mỗi lần',1],['planeBombDamage','Sát thương bom trực tiếp',1],['planeBlastCols','A · Rộng vùng nổ (ô)',1],['planeBlastRows','B · Dài vùng nổ (ô)',1],['planeCooldown','Hồi chiêu (ms)',100],['planeHeight','Độ cao máy bay',.1]],
+      'Siêu pháo cối':[['mortarShells','A · Số đạn cối',1],['mortarImpactDamage','Sát thương đạn cối trực tiếp',1],['mortarSequential','Bắn tuần tự từng viên','toggle'],['mortarSequentialInterval','Nhịp bắn tuần tự (ms)',10],['mortarWaves','X · Số đợt tỏa',1],['mortarBulletsPerWave','Y · Đạn mỗi đợt',1],['mortarWaveInterval','Nhịp giữa các đợt (ms)',10],['mortarCooldown','Nghỉ sau animation (ms)',100]],
+      'Thiên lôi':[['lightningStrikeCount','Số tia sét ban đầu',1],['lightningDamage','Sát thương tia sét gốc',1],['lightningChildDamage','Sát thương tia sét con',1],['lightningBlastRadius','X · Bán kính mỗi vụ nổ (ô)',1],['lightningRainBullets','M · Số đạn con mỗi vụ nổ',1],['lightningRainRadius','Y · Bán kính đạn con rơi (ô)',1],['lightningRecursionDepth','N · Số tầng đệ quy',1],['lightningMaxNodes','Giới hạn tổng vụ nổ',10]],
+      'Va chạm':[['popVelocity','Lực bật ô',.1],['popGravity','Trọng lực ô',.5],['popBounce','Độ nảy lại',.01],['particleCount','Số mảnh vỡ',1]]
+    };
+    let logs=[],settingsTimer=0;
+    function send(data){const payload={...data,__id:`${Date.now()}-${Math.random().toString(16).slice(2)}`};if(channel)channel.postMessage(payload);localStorage.setItem('colorCannonsControlMessage',JSON.stringify(payload))}
+    function saved(){try{return JSON.parse(localStorage.getItem('colorCannonsSettings')||'{}')}catch{return {}}}
+    function config(){return {...DEFAULTS,...saved()}}
+    function renderTeams(){document.querySelector('#teams').innerHTML=teams.map((team,i)=>`<article class="team-card ${team.card}"><small>TEAM ${i+1}</small><b>${team.name}</b><div class="skill-grid">${skills.map(([key,label])=>`<button class="${team.cls}" data-send='{"type":"skill","team":${i},"skill":"${key}"}'><small>${team.name}</small><b>${label}</b></button>`).join('')}</div></article>`).join('')}
+    const BACKGROUND_NAMES=['Đảo đêm','Hoàng hôn','Cực quang','Tinh vân'];
+    function renderSettings(){const cfg=config();document.querySelector('#settingsFields').innerHTML=Object.entries(SETTINGS_GROUPS).map(([group,fields])=>`<h3>${group}</h3>${fields.map(([key,label,step])=>`<div class="setting-row"><label for="setting-${key}">${label}</label>${step==='select'?`<select id="setting-${key}" data-key="${key}">${BACKGROUND_NAMES.map((name,i)=>`<option value="${i}" ${Number(cfg[key])===i?'selected':''}>${name}</option>`).join('')}</select>`:`<input id="setting-${key}" data-key="${key}" type="${step==='toggle'?'checkbox':'number'}" ${step==='toggle'?(cfg[key]?'checked':''):`step="${step}" value="${cfg[key]??''}"`}>`}</div>`).join('')}`).join('')}
+    function readSettingsForm(){const next={...config()};document.querySelectorAll('#settingsFields input,#settingsFields select').forEach(input=>{next[input.dataset.key]=input.type==='checkbox'?(input.checked?1:0):Number(input.value)});return next}
+    function saveSettings(){const next=readSettingsForm();localStorage.setItem('colorCannonsSettings',JSON.stringify(next));send({type:'settingsUpdate',settings:next})}
+    function queueLiveSettings(){clearTimeout(settingsTimer);settingsTimer=setTimeout(saveSettings,120)}
+    function defaultSettings(){localStorage.removeItem('colorCannonsSettings');renderSettings();send({type:'settingsUpdate',settings:DEFAULTS})}
+    function escapeHtml(text){return String(text??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+    function renderLogs(){const host=document.querySelector('#logs');if(!logs.length){host.innerHTML='<div class="muted">Đang chờ event…</div>';return}host.innerHTML=[...logs].reverse().map(entry=>`<div class="entry ${escapeHtml(entry.type)}"><div class="meta"><span>${escapeHtml(new Date(entry.time).toLocaleTimeString('vi-VN'))}</span><span class="type">${escapeHtml(String(entry.type||'event').toUpperCase())}</span></div><pre>${escapeHtml(JSON.stringify(entry.data,null,2))}</pre></div>`).join('')}
+    function updateStatus(status={}){const chip=document.querySelector('#statusChip');chip.textContent=status.connecting?'CONNECTING':status.connected?'ONLINE':'OFFLINE';chip.style.color=status.connected?'#63ffae':status.connecting?'#ffd86b':status.lastError?'#ff6f8e':'#aebddb';document.querySelector('#account').textContent=status.username?`@${status.username}`:'@—';document.querySelector('#eventCount').textContent=`${status.eventCount||0} EVENTS`;if(status.username&&!document.querySelector('#username').value)document.querySelector('#username').value=status.username}
+    async function postTikTok(path,data){const res=await fetch(path,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(data||{})});const json=await res.json().catch(()=>({}));if(!res.ok)throw new Error(json.error||json.message||'Request failed');return json}
+    function pushError(error){logs.push({time:new Date().toISOString(),type:'error',data:{message:error.message||String(error)}});while(logs.length>200)logs.shift();renderLogs()}
+    function bindApi(){if(window.EventSource){const source=new EventSource('/api/tiktok/stream');source.onmessage=event=>{let msg;try{msg=JSON.parse(event.data)}catch{return}if(msg.kind==='snapshot')logs=msg.logs||[];else if(msg.kind==='log')logs.push(msg.entry);while(logs.length>200)logs.shift();updateStatus(msg.status||{});renderLogs()};source.onerror=()=>updateStatus({lastError:'stream lost'})}document.querySelector('#connectBtn').addEventListener('click',async()=>{const username=document.querySelector('#username').value.trim();try{updateStatus({username,connecting:true});await postTikTok('/api/tiktok/connect',{username})}catch(error){pushError(error);updateStatus({username,lastError:error.message})}});document.querySelector('#disconnectBtn').addEventListener('click',()=>postTikTok('/api/tiktok/disconnect').catch(pushError));document.querySelector('#clearLogs').addEventListener('click',()=>{logs=[];renderLogs()});document.querySelector('#username').addEventListener('keydown',event=>{if(event.key==='Enter')document.querySelector('#connectBtn').click()})}
+    document.addEventListener('click',event=>{const button=event.target.closest('[data-send]');if(!button)return;send(JSON.parse(button.dataset.send))});
+    document.querySelector('#saveSettings').addEventListener('click',saveSettings);
+    document.querySelector('#defaultSettings').addEventListener('click',defaultSettings);
+    document.querySelector('#openGame').addEventListener('click',()=>window.open('/','color-cannons-game'));
+    document.querySelector('#openMonster').addEventListener('click',()=>window.open('/?mode=monster-raid','color-cannons-monster-raid'));
+    document.querySelector('#openRotateLeft').addEventListener('click',()=>window.open('/?rotate=left','color-cannons-game-rotate-left'));
+    document.querySelector('#openRotateRight').addEventListener('click',()=>window.open('/?rotate=right','color-cannons-game-rotate-right'));
+    document.querySelector('#settingsFields').addEventListener('input',queueLiveSettings);
+    document.querySelector('#settingsFields').addEventListener('change',queueLiveSettings);
+    renderTeams();renderSettings();renderLogs();bindApi();
+  </script>
+</body>
+</html>
