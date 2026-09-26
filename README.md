@@ -85,6 +85,8 @@ powershell -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.c
 
 Script tự cài Git, Node.js và Python nếu máy còn thiếu; sau đó tải game, cài thư viện và tạo shortcut **Interac Game** ngoài Desktop. Từ lần sau chỉ cần mở shortcut: game tự cập nhật từ GitHub, tự chạy lại server nếu lỗi và mở cả game lẫn trang điều khiển.
 
+Để chuyển đúng cấu hình từ máy cũ: mở `control.html` trên máy cũ, nhấn **Xuất cài đặt**, sau đó mở `control.html` trên Cloud PC và nhấn **Nhập cài đặt** để chọn file JSON vừa tải. Toàn bộ thông số hiệu năng, gameplay và vị trí avatar sẽ được giữ nguyên.
+
 ## Mô hình nội dung và doanh thu
 
 Một phiên 60–90 phút gồm: 5 phút hướng dẫn, chuỗi trận 90 giây, 20–30 giây công bố top và tái đấu. Quà tặng tạo hiệu ứng mạnh nhưng không bảo đảm thắng; comment/follow vẫn có giá trị để tránh cảm giác “trả tiền là thắng”. Ghim lời kêu gọi: “Chọn ĐỎ/XANH — comment ĐÁNH — quà kích hoạt siêu đòn”.

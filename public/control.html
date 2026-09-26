@@ -97,6 +97,9 @@
       </div>
       <div class="actions">
         <button class="btn-main" id="saveSettings">Lưu & áp dụng</button>
+        <button id="exportSettings">Xuất cài đặt</button>
+        <button id="importSettings">Nhập cài đặt</button>
+        <input id="settingsFile" type="file" accept="application/json,.json" hidden>
         <button id="defaultSettings">Mặc định</button>
         <button data-send='{"type":"reset"}'>Reset bản đồ</button>
         <button class="btn-danger" data-send='{"type":"resetAll"}'>Reset cả game + số thắng</button>
@@ -146,6 +149,8 @@
     function renderSettings(){const cfg=config();document.querySelector('#settingsFields').innerHTML=Object.entries(SETTINGS_GROUPS).map(([group,fields])=>`<h3>${group}</h3>${fields.map(([key,label,step])=>`<div class="setting-row"><label for="setting-${key}">${label}</label>${step==='select'?`<select id="setting-${key}" data-key="${key}">${BACKGROUND_NAMES.map((name,i)=>`<option value="${i}" ${Number(cfg[key])===i?'selected':''}>${name}</option>`).join('')}</select>`:`<input id="setting-${key}" data-key="${key}" type="${step==='toggle'?'checkbox':'number'}" ${step==='toggle'?(cfg[key]?'checked':''):`step="${step}" value="${cfg[key]??''}"`}>`}</div>`).join('')}`).join('')}
     function readSettingsForm(){const next={...config()};document.querySelectorAll('#settingsFields input,#settingsFields select').forEach(input=>{next[input.dataset.key]=input.type==='checkbox'?(input.checked?1:0):Number(input.value)});return next}
     function saveSettings(){const next=readSettingsForm();localStorage.setItem('colorCannonsSettings',JSON.stringify(next));send({type:'settingsUpdate',settings:next})}
+    function exportSettings(){const settings=readSettingsForm(),payload={format:'interac-game-settings',version:1,exportedAt:new Date().toISOString(),settings};const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download=`interac-game-settings-${new Date().toISOString().slice(0,10)}.json`;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+    async function importSettingsFile(file){try{const parsed=JSON.parse(await file.text()),incoming=parsed?.format==='interac-game-settings'?parsed.settings:parsed;if(!incoming||typeof incoming!=='object'||Array.isArray(incoming))throw new Error('File cài đặt không hợp lệ');const clean={};for(const [key,value] of Object.entries(incoming)){if(typeof value==='number'&&Number.isFinite(value))clean[key]=value;else if(typeof value==='boolean')clean[key]=value?1:0}if(!Object.keys(clean).length)throw new Error('File không chứa thông số hợp lệ');const next={...DEFAULTS,...clean};localStorage.setItem('colorCannonsSettings',JSON.stringify(next));renderSettings();send({type:'settingsUpdate',settings:next});alert(`Đã nhập ${Object.keys(clean).length} thông số. Game đang áp dụng cấu hình mới.`)}catch(error){alert(`Không nhập được cài đặt: ${error.message}`)}}
     function queueLiveSettings(){clearTimeout(settingsTimer);settingsTimer=setTimeout(saveSettings,120)}
     function defaultSettings(){localStorage.removeItem('colorCannonsSettings');renderSettings();send({type:'settingsUpdate',settings:DEFAULTS})}
     function escapeHtml(text){return String(text??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
@@ -156,6 +161,9 @@
     function bindApi(){if(window.EventSource){const source=new EventSource('/api/tiktok/stream');source.onmessage=event=>{let msg;try{msg=JSON.parse(event.data)}catch{return}if(msg.kind==='snapshot')logs=msg.logs||[];else if(msg.kind==='log')logs.push(msg.entry);while(logs.length>200)logs.shift();updateStatus(msg.status||{});renderLogs()};source.onerror=()=>updateStatus({lastError:'stream lost'})}document.querySelector('#connectBtn').addEventListener('click',async()=>{const username=document.querySelector('#username').value.trim();try{updateStatus({username,connecting:true});await postTikTok('/api/tiktok/connect',{username})}catch(error){pushError(error);updateStatus({username,lastError:error.message})}});document.querySelector('#disconnectBtn').addEventListener('click',()=>postTikTok('/api/tiktok/disconnect').catch(pushError));document.querySelector('#clearLogs').addEventListener('click',()=>{logs=[];renderLogs()});document.querySelector('#username').addEventListener('keydown',event=>{if(event.key==='Enter')document.querySelector('#connectBtn').click()})}
     document.addEventListener('click',event=>{const button=event.target.closest('[data-send]');if(!button)return;send(JSON.parse(button.dataset.send))});
     document.querySelector('#saveSettings').addEventListener('click',saveSettings);
+    document.querySelector('#exportSettings').addEventListener('click',exportSettings);
+    document.querySelector('#importSettings').addEventListener('click',()=>document.querySelector('#settingsFile').click());
+    document.querySelector('#settingsFile').addEventListener('change',event=>{const [file]=event.target.files;if(file)importSettingsFile(file);event.target.value=''});
     document.querySelector('#defaultSettings').addEventListener('click',defaultSettings);
     document.querySelector('#openGame').addEventListener('click',()=>window.open('/','color-cannons-game'));
     document.querySelector('#openMonster').addEventListener('click',()=>window.open('/?mode=monster-raid','color-cannons-monster-raid'));
