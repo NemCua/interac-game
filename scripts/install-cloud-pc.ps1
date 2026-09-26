@@ -14,6 +14,20 @@ function Install-WithWinget($id, $name) {
     winget install --id $id --exact --silent --accept-package-agreements --accept-source-agreements
 }
 
+function Find-RealPython {
+    $candidates = @()
+    $command = Get-Command python.exe -ErrorAction SilentlyContinue
+    if ($command -and $command.Source -notlike '*\WindowsApps\*') { $candidates += $command.Source }
+    $candidates += @(Get-ChildItem "$env:LocalAppData\Programs\Python\Python*\python.exe" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty FullName)
+    $candidates += @(Get-ChildItem "$env:ProgramFiles\Python*\python.exe" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty FullName)
+    foreach ($candidate in $candidates | Select-Object -Unique) {
+        if (-not (Test-Path $candidate)) { continue }
+        & $candidate --version *> $null
+        if ($LASTEXITCODE -eq 0) { return $candidate }
+    }
+    return $null
+}
+
 Write-Host '=== CAI DAT INTERAC GAME TREN CLOUD PC ===' -ForegroundColor Green
 
 if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
@@ -28,10 +42,14 @@ if (-not (Get-Command node -ErrorAction SilentlyContinue)) {
     Install-WithWinget 'OpenJS.NodeJS.LTS' 'Node.js LTS'
     Refresh-Path
 }
-if (-not (Get-Command py -ErrorAction SilentlyContinue) -and -not (Get-Command python -ErrorAction SilentlyContinue)) {
+$pythonExe = Find-RealPython
+if (-not $pythonExe) {
     Install-WithWinget 'Python.Python.3.12' 'Python 3.12'
     Refresh-Path
+    Start-Sleep -Seconds 2
+    $pythonExe = Find-RealPython
 }
+if (-not $pythonExe) { throw 'Khong tim thay Python that sau khi cai. Hay khoi dong lai Windows roi chay lai lenh cai dat.' }
 
 if (Test-Path (Join-Path $installDir '.git')) {
     Write-Host 'Game da ton tai, dang cap nhat...' -ForegroundColor Cyan
@@ -45,12 +63,7 @@ if (Test-Path (Join-Path $installDir '.git')) {
 Set-Location $installDir
 npm ci --omit=dev
 
-$python = if (Get-Command py -ErrorAction SilentlyContinue) { 'py' } else { 'python' }
-if ($python -eq 'py') {
-    & py -3 -m pip install --user --disable-pip-version-check -r requirements.txt
-} else {
-    & python -m pip install --user --disable-pip-version-check -r requirements.txt
-}
+& $pythonExe -m pip install --user --disable-pip-version-check -r requirements.txt
 
 $desktop = [Environment]::GetFolderPath('Desktop')
 $shortcutPath = Join-Path $desktop 'Interac Game.lnk'

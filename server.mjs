@@ -26,7 +26,7 @@ async function connectTikTok(username){
   disconnectTikTok(false);
   tikTokStatus={username:uniqueId,connected:false,connecting:true,eventCount:0,lastError:'',bridge:'python'};tikTokLogs=[];broadcastTikTok({kind:'status',status:publicTikTokStatus()});
   const script=join(fileURLToPath(new URL('.',import.meta.url)),'tiktok_python_probe.py');
-  const python=process.env.PYTHON || 'python3';
+  const python=process.env.PYTHON || (process.platform==='win32'?'python':'python3');
   tikTokProcess=spawn(python,['-u',script,uniqueId],{stdio:['ignore','pipe','pipe']});
   const readLines=(chunk,handler)=>String(chunk).split(/\r?\n/).filter(Boolean).forEach(handler);
   tikTokProcess.stdout.on('data',chunk=>readLines(chunk,line=>{
