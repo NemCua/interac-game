@@ -80,7 +80,7 @@ Game sẽ chạy tại `http://IP_MAY_AO:8787`. Nên đặt Nginx hoặc Caddy p
 Mở **PowerShell** trên Cloud PC rồi chạy một lệnh duy nhất:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/NemCua/interac-game/main/scripts/install-cloud-pc.ps1 | iex"
+powershell -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/NemCua/interac-game/main/scripts/install-cloud-pc-v2.ps1 | iex"
 ```
 
 Script tự cài Git, Node.js và Python nếu máy còn thiếu; sau đó tải game, cài thư viện và tạo shortcut **Interac Game** ngoài Desktop. Từ lần sau chỉ cần mở shortcut: game tự cập nhật từ GitHub, tự chạy lại server nếu lỗi và mở cả game lẫn trang điều khiển.
