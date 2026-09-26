@@ -75,6 +75,16 @@ docker run -d --name interac-game --restart unless-stopped \
 
 Game sẽ chạy tại `http://IP_MAY_AO:8787`. Nên đặt Nginx hoặc Caddy phía trước để có HTTPS khi dùng trên Internet.
 
+### Cài nhanh trên Windows Cloud PC
+
+Mở **PowerShell** trên Cloud PC rồi chạy một lệnh duy nhất:
+
+```powershell
+powershell -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/NemCua/interac-game/main/scripts/install-cloud-pc.ps1 | iex"
+```
+
+Script tự cài Git, Node.js và Python nếu máy còn thiếu; sau đó tải game, cài thư viện và tạo shortcut **Interac Game** ngoài Desktop. Từ lần sau chỉ cần mở shortcut: game tự cập nhật từ GitHub, tự chạy lại server nếu lỗi và mở cả game lẫn trang điều khiển.
+
 ## Mô hình nội dung và doanh thu
 
 Một phiên 60–90 phút gồm: 5 phút hướng dẫn, chuỗi trận 90 giây, 20–30 giây công bố top và tái đấu. Quà tặng tạo hiệu ứng mạnh nhưng không bảo đảm thắng; comment/follow vẫn có giá trị để tránh cảm giác “trả tiền là thắng”. Ghim lời kêu gọi: “Chọn ĐỎ/XANH — comment ĐÁNH — quà kích hoạt siêu đòn”.
