@@ -85,6 +85,8 @@ powershell -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.c
 
 Script tự cài Git, Node.js và Python nếu máy còn thiếu; sau đó tải game, cài thư viện và tạo shortcut **Interac Game** ngoài Desktop. Từ lần sau chỉ cần mở shortcut: game tự cập nhật từ GitHub, tự chạy lại server nếu lỗi và mở cả game lẫn trang điều khiển.
 
+Lần đầu mở, game tự nạp preset tối ưu đã xuất từ MacBook ngày `2026-09-26`. Preset chỉ được áp dụng một lần theo phiên bản nên những chỉnh sửa mới trên Cloud PC sẽ không bị ghi đè ở các lần mở sau.
+
 Để chuyển đúng cấu hình từ máy cũ: mở `control.html` trên máy cũ, nhấn **Xuất cài đặt**, sau đó mở `control.html` trên Cloud PC và nhấn **Nhập cài đặt** để chọn file JSON vừa tải. Toàn bộ thông số hiệu năng, gameplay và vị trí avatar sẽ được giữ nguyên.
 
 ## Mô hình nội dung và doanh thu

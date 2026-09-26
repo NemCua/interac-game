@@ -143,6 +143,7 @@
     let logs=[],settingsTimer=0;
     function send(data){const payload={...data,__id:`${Date.now()}-${Math.random().toString(16).slice(2)}`};if(channel)channel.postMessage(payload);localStorage.setItem('colorCannonsControlMessage',JSON.stringify(payload))}
     function saved(){try{return JSON.parse(localStorage.getItem('colorCannonsSettings')||'{}')}catch{return {}}}
+    async function loadBundledSettings(){const version='macbook-2026-09-26';if(localStorage.getItem('colorCannonsBundledSettings')===version)return;try{const response=await fetch('/default-settings.json',{cache:'no-store'});if(!response.ok)return;const payload=await response.json(),settings=payload?.settings;if(settings&&typeof settings==='object'&&!Array.isArray(settings)){localStorage.setItem('colorCannonsSettings',JSON.stringify(settings));localStorage.setItem('colorCannonsBundledSettings',version);send({type:'settingsUpdate',settings})}}catch(error){console.warn('Không nạp được preset MacBook:',error)}}
     function config(){return {...DEFAULTS,...saved()}}
     function renderTeams(){document.querySelector('#teams').innerHTML=teams.map((team,i)=>`<article class="team-card ${team.card}"><small>TEAM ${i+1}</small><b>${team.name}</b><div class="skill-grid">${skills.map(([key,label])=>`<button class="${team.cls}" data-send='{"type":"skill","team":${i},"skill":"${key}"}'><small>${team.name}</small><b>${label}</b></button>`).join('')}</div></article>`).join('')}
     const BACKGROUND_NAMES=['Đảo đêm','Hoàng hôn','Cực quang','Tinh vân'];
@@ -171,7 +172,7 @@
     document.querySelector('#openRotateRight').addEventListener('click',()=>window.open('/?rotate=right','color-cannons-game-rotate-right'));
     document.querySelector('#settingsFields').addEventListener('input',queueLiveSettings);
     document.querySelector('#settingsFields').addEventListener('change',queueLiveSettings);
-    renderTeams();renderSettings();renderLogs();bindApi();
+    loadBundledSettings().finally(()=>{renderTeams();renderSettings();renderLogs();bindApi()});
   </script>
 </body>
 </html>

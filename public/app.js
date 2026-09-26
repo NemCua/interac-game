@@ -34,7 +34,9 @@ DEFAULTS.lightningChildDamage=1;
 DEFAULTS.monsterCannonSweepDegrees=120;DEFAULTS.monsterCannonBottomOffset=2.2;DEFAULTS.monsterRobotTopOffset=1.7;DEFAULTS.monsterRobotScale=2.75;DEFAULTS.monsterCannonFireMin=800;DEFAULTS.monsterCannonFireMax=2200;
 DEFAULTS.weatherRain=1;DEFAULTS.weatherRainDensity=360;DEFAULTS.weatherRainSpeed=10;DEFAULTS.weatherRainOpacity=.38;DEFAULTS.weatherCloudOpacity=.32;
 DEFAULTS.weatherRainWaitMin=18;DEFAULTS.weatherRainWaitMax=40;DEFAULTS.weatherRainDurationMin=24;DEFAULTS.weatherRainDurationMax=48;DEFAULTS.weatherThunderChance=.55;DEFAULTS.weatherThunderMin=6;DEFAULTS.weatherThunderMax=14;
+const BUNDLED_SETTINGS_VERSION='macbook-2026-09-26';
 let savedSettings={};try{savedSettings=JSON.parse(localStorage.getItem('colorCannonsSettings')||'{}')}catch{}
+if(localStorage.getItem('colorCannonsBundledSettings')!==BUNDLED_SETTINGS_VERSION){try{const response=await fetch('/default-settings.json',{cache:'no-store'});if(response.ok){const payload=await response.json(),settings=payload?.settings;if(settings&&typeof settings==='object'&&!Array.isArray(settings)){savedSettings=settings;localStorage.setItem('colorCannonsSettings',JSON.stringify(settings));localStorage.setItem('colorCannonsBundledSettings',BUNDLED_SETTINGS_VERSION)}}}catch(error){console.warn('[Settings] Không nạp được preset MacBook:',error)}}
 if(savedSettings.tileVisualReset!==1){delete savedSettings.tileGap;delete savedSettings.tileHeight;savedSettings.tileVisualReset=1;localStorage.setItem('colorCannonsSettings',JSON.stringify(savedSettings))}
 if(savedSettings.tileStyleV2!==1){delete savedSettings.tileGap;savedSettings.tileStyleV2=1;localStorage.setItem('colorCannonsSettings',JSON.stringify(savedSettings))}
 if(savedSettings.tileStyleV3!==1){delete savedSettings.tileGap;savedSettings.tileStyleV3=1;localStorage.setItem('colorCannonsSettings',JSON.stringify(savedSettings))}
